@@ -26,17 +26,32 @@ NSArray *names = @[@"Igor", @"Jessica", @"Caio"];
     _tableView.delegate = self;
     [self.view addSubview:_tableView];
     
+    [self configBarButtonItem];
+}
+
+- (void)configBarButtonItem {
     UIButton *customButtom = [UIButton buttonWithType:UIButtonTypeCustom];
     [customButtom setTitle:@"Add" forState:UIControlStateNormal];
     [customButtom setTitleColor:UIColor.blueColor forState:UIControlStateNormal];
     customButtom.frame = CGRectMake(0, 0, 50, 50);
     
-    UIBarButtonItem *customButtonItem = [[UIBarButtonItem alloc] initWithCustomView:customButtom];
+    UIBarButtonItem *customButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAddButton)];
     
     self.navigationItem.rightBarButtonItem = customButtonItem;
-    
-   
 }
+
+- (void)didTapAddButton {
+    printf("tap add\n");
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Attention" message:@"This is an alert" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        printf("ok tapped");
+    }];
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated: true completion: nil];
+    
+}
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
