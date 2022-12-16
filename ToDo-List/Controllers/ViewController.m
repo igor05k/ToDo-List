@@ -13,9 +13,15 @@
 
 @end
 
-@implementation ViewController 
+@implementation ViewController
 
-NSArray *names = @[@"Igor", @"Jessica", @"Caio"];
+NSMutableArray *namesArray = nil;
+
++ (void)initialize {
+    if(!namesArray) {
+        namesArray = [NSMutableArray arrayWithObjects:@"Igor", @"Jessica", @"Caio", nil];
+    }
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -46,6 +52,8 @@ NSArray *names = @[@"Igor", @"Jessica", @"Caio"];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Attention" message:@"This is an alert" preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         printf("ok tapped");
+        [namesArray addObject:@"Anderson"];
+        [self.tableView reloadData];
     }];
     [alertController addAction:okAction];
     [self presentViewController:alertController animated: true completion: nil];
@@ -58,12 +66,12 @@ NSArray *names = @[@"Igor", @"Jessica", @"Caio"];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = names[indexPath.row];
+    cell.textLabel.text = namesArray[indexPath.row];
     return cell;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return names.count;
+    return namesArray.count;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
