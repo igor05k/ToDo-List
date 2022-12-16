@@ -53,9 +53,11 @@ NSMutableArray *namesArray = nil;
     }];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         NSString *nameToAdd = alertController.textFields[0].text;
-        NSLog(@"%@", nameToAdd);
-        [namesArray addObject: nameToAdd];
-        [self.tableView reloadData];
+        NSString *nameTrimmed = [nameToAdd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        if (![nameTrimmed isEqualToString:@""]) {
+            [namesArray addObject: nameTrimmed];
+            [self.tableView reloadData];
+        }
         
     }];
     [alertController addAction:okAction];
