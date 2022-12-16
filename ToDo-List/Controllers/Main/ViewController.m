@@ -6,6 +6,7 @@
 //
 
 #import "ViewController.h"
+#import "DetailsViewController.h"
 
 @interface ViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -20,6 +21,7 @@ NSMutableArray *namesArray = nil;
 + (void)initialize {
     if(!namesArray) {
         namesArray = [NSMutableArray arrayWithObjects:@"Igor", @"Jessica", @"Caio", nil];
+//        namesArray = [NSMutableArray new];
     }
 }
 
@@ -27,6 +29,8 @@ NSMutableArray *namesArray = nil;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
+    
+    self.view.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.93 alpha:1];
     
     _tableView.dataSource = self;
     _tableView.delegate = self;
@@ -36,11 +40,6 @@ NSMutableArray *namesArray = nil;
 }
 
 - (void)configBarButtonItem {
-    UIButton *customButtom = [UIButton buttonWithType:UIButtonTypeCustom];
-    [customButtom setTitle:@"Add" forState:UIControlStateNormal];
-    [customButtom setTitleColor:UIColor.blueColor forState:UIControlStateNormal];
-    customButtom.frame = CGRectMake(0, 0, 50, 50);
-    
     UIBarButtonItem *customButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAddButton)];
     
     self.navigationItem.rightBarButtonItem = customButtonItem;
@@ -80,6 +79,11 @@ NSMutableArray *namesArray = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath: indexPath animated: true];
+    
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    DetailsViewController* controller = [storyboard instantiateViewControllerWithIdentifier:@"details"];
+    [self.navigationController pushViewController:controller animated:YES];
 }
 
 
