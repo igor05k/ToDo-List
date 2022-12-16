@@ -47,17 +47,19 @@ NSMutableArray *namesArray = nil;
 }
 
 - (void)didTapAddButton {
-    printf("tap add\n");
-    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Attention" message:@"This is an alert" preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Type anything..";
+    }];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        printf("ok tapped");
-        [namesArray addObject:@"Anderson"];
+        NSString *nameToAdd = alertController.textFields[0].text;
+        NSLog(@"%@", nameToAdd);
+        [namesArray addObject: nameToAdd];
         [self.tableView reloadData];
+        
     }];
     [alertController addAction:okAction];
     [self presentViewController:alertController animated: true completion: nil];
-    
 }
 
 
