@@ -7,12 +7,12 @@
 
 #import "ViewController.h"
 #import "DetailsViewController.h"
-#import "Person.h"
+#import "Notes.h"
 
 @interface ViewController () <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UITableView *tableView;
-@property (strong, nonatomic) NSMutableArray<Person *> *notesArray;
+@property (strong, nonatomic) NSMutableArray<Notes *> *notesArray;
 
 @end
 
@@ -21,17 +21,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.notesArray = [NSMutableArray new];
+    self.title = @"Todo List";
     
     // Do any additional setup after loading the view.
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
     
-    self.view.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.93 alpha:1];
+    self.tableView.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.93 alpha:1];
     
-    _tableView.dataSource = self;
-    _tableView.delegate = self;
-    [self.view addSubview:_tableView];
-    
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    [self.view addSubview:self.tableView];
+    [self fetchNotes];
     [self configBarButtonItem];
+    
 }
 
 - (void)configBarButtonItem {
@@ -51,12 +53,17 @@
         NSString *nameTrimmed = [nameToAdd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         
         if (![nameTrimmed isEqualToString:@""]) {
-            Person *myPerson = [[Person alloc] initWithName:nameTrimmed noteText:@""];
+            Notes *myNotes = [[Notes alloc] initWithIdentifier:[NSUUID UUID] noteTitle:nameTrimmed noteText:@""];
+
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:myNotes requiringSecureCoding:true error:nil];
             
-            [self.notesArray addObject: myPerson];
+            [defaults setObject:data forKey:myNotes.identifier.UUIDString];
+            [defaults synchronize];
+            
+            [self.notesArray addObject: myNotes];
             [self.tableView reloadData];
         }
-
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler: nil];
     
@@ -72,6 +79,12 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
+//    NSLog(@"%@", self.notesArray[indexPath.row].noteTitle);
+    
+//    Notes *noteSelected = self.notesArray[indexPath.row];
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    NSString *value = [defaults objectForKey:noteSelected.identifier.UUIDString];
+    
     cell.textLabel.text = self.notesArray[indexPath.row].noteTitle;
     return cell;
 }
@@ -80,16 +93,32 @@
     return self.notesArray.count;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath: indexPath animated: true];
+- (void)fetchNotes {
+    Notes *noteSelected;
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    NSString *value = [defaults objectForKey:noteSelected.identifier.UUIDString];
+//    NSLog(@"%@", value);
+    NSLog(@"%@", noteSelected.identifier.UUIDString);
     
-    NSLog(@"%@", self.notesArray[indexPath.row].noteTitle);
-    
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    
-    DetailsViewController* controller = [storyboard instantiateViewControllerWithIdentifier:@"details"];
-    [self.navigationController pushViewController:controller animated:YES];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:noteSelected.identifier.UUIDString]) {
+        NSLog(@"Data is saved in NSUserDefaults");
+    } else {
+        NSLog(@"Data is not saved in NSUserDefaults");
+    }
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath: indexPath animated: true];
+    Notes *noteSelected = self.notesArray[indexPath.row];
+    
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    DetailsViewController* controller = [storyboard instantiateViewControllerWithIdentifier:@"details"];
+    controller.notes = noteSelected;
+    
+    [self.navigationController pushViewController:controller animated:YES];
+}
 
 @end

@@ -9,12 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Person : NSObject
+@interface Notes : NSObject
 
+@property (nonatomic, strong) NSUUID *identifier;
 @property (nonatomic, strong) NSString *noteTitle;
 @property (nonatomic, nullable, strong) NSString *noteDescription;
 
-- (instancetype)initWithName:(NSString *)noteTitle noteText:(NSString *)noteText;
+- (void)setNoteDescription:(NSString *)noteDescription;
+- (instancetype)initWithIdentifier:(NSUUID *)identifier noteTitle:(NSString *)noteTitle noteText:(NSString *)noteText;
 
 @end
 

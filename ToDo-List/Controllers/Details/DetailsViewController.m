@@ -6,6 +6,8 @@
 //
 
 #import "DetailsViewController.h"
+#import "Notes.h"
+#import "ViewController.h"
 
 @interface DetailsViewController ()
 
@@ -15,8 +17,6 @@
 
 @implementation DetailsViewController
 
-NSString *inputText = @"";
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self configTextField];
@@ -25,14 +25,11 @@ NSString *inputText = @"";
       [[UITapGestureRecognizer alloc] initWithTarget:self
                                               action:@selector(handleSingleTap:)];
     [self.customTextView addGestureRecognizer:singleFingerTap];
+    NSLog(@"%@", self.notes.identifier);
+    NSLog(@"%@", self.notes.description);
 }
 
-- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer
-{
-//  CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-
-  //Do stuff here...
-    printf("tappp");
+- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
     [self.customTextView becomeFirstResponder];
 
     UIBarButtonItem *customButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(didTapSaveButton)];
@@ -68,6 +65,18 @@ NSString *inputText = @"";
 - (void)didTapSaveButton {
     UIBarButtonItem *customButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(didTapEditButton)];
     [self.customTextView resignFirstResponder];
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    [self.notes setNoteDescription:self.customTextView.text];
+    // save description text into userdefaults
+    [defaults setObject:self.customTextView.text forKey:self.notes.identifier.UUIDString];
+    [defaults synchronize];
+    
+//    NSString *valueSaved = [defaults objectForKey:self.notes.identifier.UUIDString];
+    NSLog(@"%@", self.notes.description);
+    NSLog(@"%@", self.customTextView.text);
+//    NSLog(@"%@", valueSaved);
     
     self.navigationItem.rightBarButtonItem = customButtonItem;
     self.customTextView.editable = NO;
@@ -81,6 +90,8 @@ NSString *inputText = @"";
     
     self.navigationItem.rightBarButtonItem = customButtonItem;
     self.customTextView.editable = YES;
+    NSLog(@"%@", self.notes.noteTitle);
+    NSLog(@"%@", self.notes.description);
 }
 
 - (BOOL)canBecomeFirstResponder {
