@@ -7,26 +7,21 @@
 
 #import "ViewController.h"
 #import "DetailsViewController.h"
+#import "Person.h"
 
 @interface ViewController () <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) NSMutableArray<Person *> *notesArray;
 
 @end
 
 @implementation ViewController
 
-NSMutableArray *namesArray = nil;
-
-+ (void)initialize {
-    if(!namesArray) {
-        namesArray = [NSMutableArray arrayWithObjects:@"Igor", @"Jessica", @"Caio", nil];
-//        namesArray = [NSMutableArray new];
-    }
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.notesArray = [NSMutableArray new];
+    
     // Do any additional setup after loading the view.
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
     
@@ -50,15 +45,22 @@ NSMutableArray *namesArray = nil;
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = @"Type anything..";
     }];
+    
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         NSString *nameToAdd = alertController.textFields[0].text;
         NSString *nameTrimmed = [nameToAdd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
         if (![nameTrimmed isEqualToString:@""]) {
-            [namesArray addObject: nameTrimmed];
+            Person *myPerson = [[Person alloc] initWithName:nameTrimmed noteText:@""];
+            
+            [self.notesArray addObject: myPerson];
             [self.tableView reloadData];
         }
-        
+
     }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler: nil];
+    
+    [alertController addAction:cancelAction];
     [alertController addAction:okAction];
     [self presentViewController:alertController animated: true completion: nil];
 }
@@ -69,16 +71,19 @@ NSMutableArray *namesArray = nil;
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = namesArray[indexPath.row];
+    
+    cell.textLabel.text = self.notesArray[indexPath.row].noteTitle;
     return cell;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return namesArray.count;
+    return self.notesArray.count;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath: indexPath animated: true];
+    
+    NSLog(@"%@", self.notesArray[indexPath.row].noteTitle);
     
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     
