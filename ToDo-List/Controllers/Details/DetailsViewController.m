@@ -29,6 +29,10 @@
     NSLog(@"%@", self.notes.description);
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    self.customTextView.text = self.notes.noteDescription;
+}
+
 - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
     [self.customTextView becomeFirstResponder];
 

@@ -53,12 +53,12 @@
         NSString *nameTrimmed = [nameToAdd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         
         if (![nameTrimmed isEqualToString:@""]) {
-            Notes *myNotes = [[Notes alloc] initWithIdentifier:[NSUUID UUID] noteTitle:nameTrimmed noteText:@""];
+            Notes *myNotes = [[Notes alloc] initWithIdentifier:[NSUUID UUID] noteTitle:nameTrimmed noteText:@"NOTE TEXT PADRAO"];
 
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:myNotes requiringSecureCoding:true error:nil];
             
-            [defaults setObject:data forKey:myNotes.identifier.UUIDString];
+            [defaults setObject:data forKey:@"notesArray"];
             [defaults synchronize];
             
             [self.notesArray addObject: myNotes];
@@ -78,12 +78,6 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    
-//    NSLog(@"%@", self.notesArray[indexPath.row].noteTitle);
-    
-//    Notes *noteSelected = self.notesArray[indexPath.row];
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    NSString *value = [defaults objectForKey:noteSelected.identifier.UUIDString];
     
     cell.textLabel.text = self.notesArray[indexPath.row].noteTitle;
     return cell;
