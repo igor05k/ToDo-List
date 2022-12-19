@@ -23,5 +23,19 @@
     _noteDescription = noteDescription;
 }
 
+- (void)encodeWithCoder:(nonnull NSCoder *)coder {
+    [coder encodeObject:self.noteTitle forKey:@"noteTitle"];
+    [coder encodeObject:self.noteDescription forKey:@"noteDescription"];
+}
+
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        _noteTitle = [coder decodeObjectForKey:@"noteTitle"];
+        _noteTitle = [coder decodeObjectForKey:@"noteDescription"];
+    }
+    return self;
+}
+
 @end
 

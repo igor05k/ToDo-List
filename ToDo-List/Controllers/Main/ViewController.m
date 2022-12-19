@@ -36,6 +36,21 @@
     
 }
 
+- (void)fetchNotes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSData *data = [defaults dataForKey:@"objects"];
+    NSLog(@"%@", data);
+
+    if (data) {
+        NSError *error = nil;
+        NSMutableArray *array = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSMutableArray class] fromData:data error:&error];
+        self.notesArray = array;
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+        }
+    }
+}
+
 - (void)configBarButtonItem {
     UIBarButtonItem *customButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAddButton)];
     
@@ -53,12 +68,12 @@
         NSString *nameTrimmed = [nameToAdd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         
         if (![nameTrimmed isEqualToString:@""]) {
-            Notes *myNotes = [[Notes alloc] initWithIdentifier:[NSUUID UUID] noteTitle:nameTrimmed noteText:@"NOTE TEXT PADRAO"];
+            Notes *myNotes = [[Notes alloc] initWithIdentifier:[NSUUID UUID] noteTitle:nameTrimmed noteText:@""];
 
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:myNotes requiringSecureCoding:true error:nil];
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.notesArray requiringSecureCoding:true error:nil];
             
-            [defaults setObject:data forKey:@"notesArray"];
+            [defaults setObject:data forKey:@"objects"];
             [defaults synchronize];
             
             [self.notesArray addObject: myNotes];
@@ -85,21 +100,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.notesArray.count;
-}
-
-- (void)fetchNotes {
-    Notes *noteSelected;
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    NSString *value = [defaults objectForKey:noteSelected.identifier.UUIDString];
-//    NSLog(@"%@", value);
-    NSLog(@"%@", noteSelected.identifier.UUIDString);
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([defaults boolForKey:noteSelected.identifier.UUIDString]) {
-        NSLog(@"Data is saved in NSUserDefaults");
-    } else {
-        NSLog(@"Data is not saved in NSUserDefaults");
-    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

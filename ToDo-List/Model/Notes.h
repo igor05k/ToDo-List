@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Notes : NSObject
+@interface Notes : NSObject <NSCoding>
 
 @property (nonatomic, strong) NSUUID *identifier;
 @property (nonatomic, strong) NSString *noteTitle;
